@@ -28,6 +28,34 @@ static inline bool target_path(const char *path) {
     return strcasestr(path, "steam");
 }
 
+// Caller must free
+char* find_replacement(const char *restrict path) {
+    char* tmp_path = strdup(path);
+    char* dir_name = dirname(tmp_path);
+    char* file_name = basename(tmp_path);
+    //fprintf(stderr, "path %s\n", tmp_path);
+    //fprintf(stderr, "dir %s\n", dir_name);
+    //fprintf(stderr, "file %s\n", file_name);
+    struct dirent *ent;
+    int file_len = strlen(file_name);
+    int dir_len = strlen(dir_name);
+
+    DIR* dir = opendir(dir_name);
+    if (dir == NULL)
+        return tmp_path; // forward whatever we had
+
+    while ((ent = readdir(dir)) != NULL) {
+        if (ent->d_namlen == file_len && strcasecmp(ent->d_name, file_name) == 0) {
+            fprintf(stderr, "Found replacement match: %s\n", ent->d_name);
+            strcpy(tmp_path + dir_len + 1, ent->d_name); // + 1 for trailing slash
+            fprintf(stderr, "New path %s\n", tmp_path);
+            break;
+        }
+    }
+    (void)closedir(dir);
+    return tmp_path;
+}
+
 EXPORT
 int jic_open(const char *path, int oflag, ...) {
     va_list ap;
@@ -42,11 +70,15 @@ int jic_open(const char *path, int oflag, ...) {
 	}
 
     int fd = open(path, oflag, mode);
-    if (fd < 0) {
-        fprintf(stderr, "**************\n");
-        fprintf(stderr, "Failed to open: %s\n", path);
-        fprintf(stderr, "**************\n");
+    if (fd < 0 && target_path(path)) {
+        //fprintf(stderr, "**************\n");
+        fprintf(stderr, "failed to open: %s\n", path);
+        //fprintf(stderr, "**************\n");
+        char* replacement_path = find_replacement(path);
+        fd = open(replacement_path, oflag, mode);
+        free(replacement_path);
     }
+
     return fd;
 }
 
@@ -63,39 +95,17 @@ FILE* jic_fopen(const char * restrict path, const char * restrict mode) {
 }
 */
 
+
 EXPORT
 int jic_stat(const char *restrict path, struct stat *restrict buf) {
     int ret = stat(path, buf);
-    if (target_path(path) && ret < 0) {
+    if (ret < 0 && target_path(path)) {
         //fprintf(stderr, "**************\n");
         fprintf(stderr, "failed stat for target: %s\n", path);
         //fprintf(stderr, "**************\n");
-
-        char * tmp_path = strdup(path);
-        char* dir_name = dirname(tmp_path);
-        char* file_name = basename(tmp_path);
-        //fprintf(stderr, "path %s\n", tmp_path);
-        //fprintf(stderr, "dir %s\n", dir_name);
-        //fprintf(stderr, "file %s\n", file_name);
-
-        DIR* dir = opendir(dir_name);
-        struct dirent *ent;
-        int file_len = strlen(file_name);
-        int dir_len = strlen(dir_name);
-        if (dir == NULL)
-            return ret; // forward whatever original error we had
-
-        while ((ent = readdir(dir)) != NULL) {
-            if (ent->d_namlen == file_len && strcasecmp(ent->d_name, file_name) == 0) {
-                fprintf(stderr, "Found replacement match: %s\n", ent->d_name);
-                strcpy(tmp_path + dir_len + 1, ent->d_name); // + 1 for trailing slash
-                fprintf(stderr, "New path %s\n", tmp_path);
-                ret = stat(tmp_path, buf);
-                break;
-            }
-        }
-        (void)closedir(dir);
-        free(tmp_path);
+        char* replacement_path = find_replacement(path);
+        ret = stat(replacement_path, buf);
+        free(replacement_path);
     }
     return ret;
 }
