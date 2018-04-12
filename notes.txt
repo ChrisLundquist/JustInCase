@@ -1,0 +1,360 @@
+
+# Syscall targets
+stat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFD068, 0x0)		 = 0 0
+access("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x4, 0x0)		 = 0 0
+stat64("/Applications/Steam.app/Contents/MacOS\0", 0xBFFFDC60, 0x0)		 = 0 0
+unlink("/Applications/Steam.app/Contents/MacOS/.writable\0", 0x0, 0x0)		 = 0 0
+stat("/Applications/Steam.app/Contents/MacOS\0", 0xBFFFD848, 0x0)		 = 0 0
+open_nocancel("/Applications/Steam.app/Contents/MacOS\0", 0x1100004, 0xFFFFFFFFBFFFD828)		 = 5 0
+stat("/Applications/Steam.app/Contents/MacOS/Frameworks\0", 0xBFFFD3B8, 0x0)		 = 0 0
+stat("/Applications/Steam.app/Contents/MacOS/frameworks\0", 0xBFFFDCA0, 0x0)		 = -1 Err#2
+stat("/Applications/Steam.app/Contents/MacOS/fRameworks\0", 0xBFFFDCA0, 0x0)		 = -1 Err#2
+stat("/Applications/Steam.app/Contents/MacOS/fRAmeworks\0", 0xBFFFDCA0, 0x0)		 = -1 Err#2
+
+
+# Thread backtrace
+
+    frame #12: 0x00023d50 steam`CCarbonUpdateUI::DoFatalError() + 160
+    frame #13: 0x000183cf steam`CSteamUpdater::LogAndPostFatalError(char const*) + 51
+    frame #14: 0x000181c5 steam`CSteamUpdater::BEnsureDirectoryCaseInsensitive(char const*) + 887
+    frame #15: 0x00017746 steam`CSteamUpdater::BCheckFilesystemUpdateRequirements() + 98
+    frame #16: 0x00013111 steam`main + 1111
+    frame #17: 0x000023b5 steam`start + 53
+
+
+# Dissassembly:
+- We list the directory
+- Iterate the files and grab one.
+- We check if the directory is writable by making a and deleting a file?
+- We swap some bits in a name we read, Frameworks -> frameworks -> fRameworks -> fRAmworks and check if they all exist
+- If stat returns -1 for any of them, we bail
+
+steam`CSteamUpdater::BEnsureDirectoryCaseInsensitive:
+    0x17e4e <+0>:    pushl  %ebp
+    0x17e4f <+1>:    movl   %esp, %ebp
+    0x17e51 <+3>:    pushl  %ebx
+    0x17e52 <+4>:    pushl  %edi
+    0x17e53 <+5>:    pushl  %esi
+    0x17e54 <+6>:    subl   $0x49c, %esp              ; imm = 0x49C
+    0x17e5a <+12>:   calll  0x17e5f                   ; <+17>
+    0x17e5f <+17>:   popl   %ecx
+    0x17e60 <+18>:   movl   %ecx, -0x484(%ebp)
+    0x17e66 <+24>:   movl   0x1881c9(%ecx), %eax
+    0x17e6c <+30>:   movl   %eax, -0x498(%ebp)
+    0x17e72 <+36>:   movl   (%eax), %eax
+    0x17e74 <+38>:   movl   %eax, -0x10(%ebp)
+    0x17e77 <+41>:   leal   0x114510(%ecx), %eax
+    0x17e7d <+47>:   movl   %eax, 0x8(%esp)
+    0x17e81 <+51>:   movl   0xc(%ebp), %eax
+    0x17e84 <+54>:   movl   %eax, 0x4(%esp)
+    0x17e88 <+58>:   leal   -0x420(%ebp), %eax
+    0x17e8e <+64>:   movl   %eax, (%esp)
+    0x17e91 <+67>:   calll  0xbe512                   ; CDirIterator::CDirIterator(char const*, char const*)
+    0x17e96 <+72>:   movb   $0x0, -0x491(%ebp)
+    0x17e9d <+79>:   movb   $0x0, -0x492(%ebp)
+    0x17ea4 <+86>:   movb   -0x491(%ebp), %al
+    0x17eaa <+92>:   andb   $0x1, %al
+    0x17eac <+94>:   movb   %al, -0x488(%ebp)
+    0x17eb2 <+100>:  leal   -0x420(%ebp), %edi
+    0x17eb8 <+106>:  jne    0x18164                   ; <+790>
+    0x17ebe <+112>:  movl   %edi, (%esp)
+    0x17ec1 <+115>:  calll  0xbe51c                   ; CDirIterator::BNextFile()
+    0x17ec6 <+120>:  cmpb   $0x1, %al
+    0x17ec8 <+122>:  jne    0x18029                   ; <+475>
+    0x17ece <+128>:  movl   %edi, (%esp)
+    0x17ed1 <+131>:  calll  0xbe596                   ; CDirIterator::CurrentFileName()
+    0x17ed6 <+136>:  movl   %eax, (%esp)
+    0x17ed9 <+139>:  calll  0xba258                   ; Q_UnqualifiedFileName
+    0x17ede <+144>:  movl   %eax, 0x4(%esp)
+    0x17ee2 <+148>:  leal   -0x410(%ebp), %esi
+    0x17ee8 <+154>:  movl   %esi, (%esp)
+    0x17eeb <+157>:  movl   $0x400, 0x8(%esp)         ; imm = 0x400
+    0x17ef3 <+165>:  calll  0xb7fe4                   ; Q_strncpy
+    0x17ef8 <+170>:  movl   %esi, (%esp)
+    0x17efb <+173>:  calll  0x12899e                  ; symbol stub for: strlen
+    0x17f00 <+178>:  xorl   %ebx, %ebx
+    0x17f02 <+180>:  cmpl   $0x4, %eax
+    0x17f05 <+183>:  jl     0x17ebe                   ; <+112>
+    0x17f07 <+185>:  movl   $0x0, -0x488(%ebp)
+    0x17f11 <+195>:  movl   %ebx, %edx
+    0x17f13 <+197>:  jmp    0x17f22                   ; <+212>
+    0x17f15 <+199>:  incl   %edx
+    0x17f16 <+200>:  leal   -0x410(%ebp), %esi
+    0x17f1c <+206>:  movl   -0x48c(%ebp), %eax
+    0x17f22 <+212>:  cmpl   %eax, %edx
+    0x17f24 <+214>:  jge    0x17ea4                   ; <+86>
+    0x17f2a <+220>:  movl   %eax, -0x48c(%ebp)
+    0x17f30 <+226>:  movb   -0x410(%ebp,%edx), %al
+    0x17f37 <+233>:  movb   %al, %cl
+    0x17f39 <+235>:  addb   $-0x41, %cl
+    0x17f3c <+238>:  cmpb   $0x1a, %cl
+    0x17f3f <+241>:  jb     0x17f4b                   ; <+253>
+    0x17f41 <+243>:  movb   %al, %cl
+    0x17f43 <+245>:  addb   $-0x61, %cl
+    0x17f46 <+248>:  cmpb   $0x19, %cl
+    0x17f49 <+251>:  ja     0x17f15                   ; <+199>
+    0x17f4b <+253>:  xorb   $0x20, %al
+    0x17f4d <+255>:  movb   %al, -0x410(%ebp,%edx)
+    0x17f54 <+262>:  movl   %edx, -0x490(%ebp)
+    0x17f5a <+268>:  movl   %esi, 0xc(%esp)
+    0x17f5e <+272>:  movl   0xc(%ebp), %eax
+    0x17f61 <+275>:  movl   %eax, 0x8(%esp)
+    0x17f65 <+279>:  movl   -0x484(%ebp), %eax
+    0x17f6b <+285>:  leal   0x113ae4(%eax), %eax
+    0x17f71 <+291>:  movl   %eax, 0x4(%esp)
+    0x17f75 <+295>:  leal   -0x430(%ebp), %edi
+    0x17f7b <+301>:  movl   %edi, (%esp)
+    0x17f7e <+304>:  calll  0x201ba                   ; CUtlFmtString::CUtlFmtString(char const*, ...)
+    0x17f83 <+309>:  leal   -0x420(%ebp), %eax
+    0x17f89 <+315>:  movl   %eax, (%esp)
+    0x17f8c <+318>:  calll  0xbe57c                   ; CDirIterator::BCurrentIsDir() const
+    0x17f91 <+323>:  incl   %ebx
+    0x17f92 <+324>:  cmpb   $0x0, -0x421(%ebp)
+    0x17f99 <+331>:  movl   -0x430(%ebp), %edx
+    0x17f9f <+337>:  cmovnsl %edi, %edx
+    0x17fa2 <+340>:  movl   -0x484(%ebp), %ecx
+    0x17fa8 <+346>:  leal   0x1161e3(%ecx), %ecx
+    0x17fae <+352>:  testl  %edx, %edx
+    0x17fb0 <+354>:  cmovnel %edx, %ecx
+    0x17fb3 <+357>:  cmpb   $0x1, %al
+    0x17fb5 <+359>:  jne    0x17fdb                   ; <+397>
+    0x17fb7 <+361>:  movl   %ecx, (%esp)
+    0x17fba <+364>:  calll  0xbeb40                   ; BIsValidDirectory(char const*)
+    0x17fbf <+369>:  testb  %al, %al
+    0x17fc1 <+371>:  jne    0x17fe7                   ; <+409>
+    0x17fc3 <+373>:  jmp    0x17fed                   ; <+415>
+    0x17fc5 <+375>:  jmp    0x17fce                   ; <+384>
+    0x17fc7 <+377>:  movl   %eax, %esi
+    0x17fc9 <+379>:  jmp    0x18369                   ; <+1307>
+    0x17fce <+384>:  movl   %eax, %esi
+    0x17fd0 <+386>:  leal   -0x420(%ebp), %edi
+    0x17fd6 <+392>:  jmp    0x18369                   ; <+1307>
+    0x17fdb <+397>:  movl   %ecx, (%esp)
+    0x17fde <+400>:  calll  0xbef1a                   ; BFileExists(char const*)
+    0x17fe3 <+405>:  cmpb   $0x1, %al
+    0x17fe5 <+407>:  jne    0x17fed                   ; <+415>
+    0x17fe7 <+409>:  incl   -0x488(%ebp)
+    0x17fed <+415>:  xorl   %esi, %esi
+    0x17fef <+417>:  cmpl   $0x3, %ebx
+    0x17ff2 <+420>:  jl     0x1800d                   ; <+447>
+    0x17ff4 <+422>:  cmpl   %ebx, -0x488(%ebp)
+    0x17ffa <+428>:  sete   -0x492(%ebp)
+    0x18001 <+435>:  movl   $0x4, %esi
+    0x18006 <+440>:  movb   $0x1, -0x491(%ebp)
+    0x1800d <+447>:  movl   %edi, (%esp)
+    0x18010 <+450>:  calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x18015 <+455>:  cmpl   $0x4, %esi
+    0x18018 <+458>:  movl   -0x490(%ebp), %edx
+    0x1801e <+464>:  je     0x17ea4                   ; <+86>
+    0x18024 <+470>:  jmp    0x17f15                   ; <+199>
+    0x18029 <+475>:  movl   0xc(%ebp), %eax
+    0x1802c <+478>:  movl   %eax, (%esp)
+    0x1802f <+481>:  calll  0xbef1a                   ; BFileExists(char const*)
+    0x18034 <+486>:  testb  %al, %al
+    0x18036 <+488>:  jne    0x1804b                   ; <+509>
+    0x18038 <+490>:  movl   0xc(%ebp), %eax
+    0x1803b <+493>:  movl   %eax, (%esp)
+    0x1803e <+496>:  calll  0xbe486                   ; BCreateDirectory(char const*)
+    0x18043 <+501>:  cmpb   $0x1, %al
+    0x18045 <+503>:  jne    0x18215                   ; <+967>
+    0x1804b <+509>:  movl   0xc(%ebp), %eax
+    0x1804e <+512>:  movl   %eax, 0x8(%esp)
+    0x18052 <+516>:  movl   -0x484(%ebp), %eax
+    0x18058 <+522>:  leal   0x114849(%eax), %eax
+    0x1805e <+528>:  movl   %eax, -0x48c(%ebp)
+    0x18064 <+534>:  movl   %eax, 0x4(%esp)
+    0x18068 <+538>:  leal   -0x440(%ebp), %ebx
+    0x1806e <+544>:  movl   %ebx, (%esp)
+    0x18071 <+547>:  calll  0x201ba                   ; CUtlFmtString::CUtlFmtString(char const*, ...)
+    0x18076 <+552>:  cmpb   $0x0, -0x431(%ebp)
+    0x1807d <+559>:  jns    0x18087                   ; <+569>
+    0x1807f <+561>:  movl   -0x440(%ebp), %eax
+    0x18085 <+567>:  jmp    0x18089                   ; <+571>
+    0x18087 <+569>:  movl   %ebx, %eax
+    0x18089 <+571>:  movl   -0x484(%ebp), %edx
+    0x1808f <+577>:  leal   0x11211c(%edx), %ecx
+    0x18095 <+583>:  movl   %ecx, 0x4(%esp)
+    0x18099 <+587>:  leal   0x1161e3(%edx), %edi
+    0x1809f <+593>:  testl  %eax, %eax
+    0x180a1 <+595>:  cmovel %edi, %eax
+    0x180a4 <+598>:  movl   %eax, (%esp)
+    0x180a7 <+601>:  calll  0x1286ec                  ; symbol stub for: fopen
+    0x180ac <+606>:  movl   %eax, %esi
+    0x180ae <+608>:  movl   %ebx, (%esp)
+    0x180b1 <+611>:  calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x180b6 <+616>:  testl  %esi, %esi
+    0x180b8 <+618>:  je     0x18215                   ; <+967>
+    0x180be <+624>:  movl   %esi, (%esp)
+    0x180c1 <+627>:  calll  0x1286c8                  ; symbol stub for: fclose
+    0x180c6 <+632>:  movl   0xc(%ebp), %eax
+    0x180c9 <+635>:  movl   %eax, 0x8(%esp)
+    0x180cd <+639>:  movl   -0x484(%ebp), %eax
+    0x180d3 <+645>:  leal   0x114856(%eax), %eax
+    0x180d9 <+651>:  movl   %eax, 0x4(%esp)
+    0x180dd <+655>:  leal   -0x450(%ebp), %esi
+    0x180e3 <+661>:  movl   %esi, (%esp)
+    0x180e6 <+664>:  calll  0x201ba                   ; CUtlFmtString::CUtlFmtString(char const*, ...)
+    0x180eb <+669>:  cmpb   $0x0, -0x441(%ebp)
+    0x180f2 <+676>:  jns    0x180fa                   ; <+684>
+    0x180f4 <+678>:  movl   -0x450(%ebp), %esi
+    0x180fa <+684>:  testl  %esi, %esi
+    0x180fc <+686>:  cmovel %edi, %esi
+    0x180ff <+689>:  movl   %esi, (%esp)
+    0x18102 <+692>:  calll  0xbef1a                   ; BFileExists(char const*)
+    0x18107 <+697>:  movb   %al, -0x492(%ebp)
+    0x1810d <+703>:  leal   -0x450(%ebp), %eax
+    0x18113 <+709>:  movl   %eax, (%esp)
+    0x18116 <+712>:  calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x1811b <+717>:  movl   0xc(%ebp), %eax
+    0x1811e <+720>:  movl   %eax, 0x8(%esp)
+    0x18122 <+724>:  movl   -0x48c(%ebp), %eax
+    0x18128 <+730>:  movl   %eax, 0x4(%esp)
+    0x1812c <+734>:  leal   -0x460(%ebp), %esi
+    0x18132 <+740>:  movl   %esi, (%esp)
+    0x18135 <+743>:  calll  0x201ba                   ; CUtlFmtString::CUtlFmtString(char const*, ...)
+    0x1813a <+748>:  cmpb   $0x0, -0x451(%ebp)
+    0x18141 <+755>:  jns    0x18149                   ; <+763>
+    0x18143 <+757>:  movl   -0x460(%ebp), %esi
+    0x18149 <+763>:  testl  %esi, %esi
+    0x1814b <+765>:  cmovnel %esi, %edi
+    0x1814e <+768>:  movl   %edi, (%esp)
+    0x18151 <+771>:  calll  0xbed5b                   ; UnlinkFile(char const*)
+    0x18156 <+776>:  leal   -0x460(%ebp), %eax
+    0x1815c <+782>:  movl   %eax, (%esp)
+    0x1815f <+785>:  calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x18164 <+790>:  testb  $0x1, -0x492(%ebp)
+    0x1816b <+797>:  jne    0x18328                   ; <+1242>
+    0x18171 <+803>:  movl   0xc(%ebp), %eax
+    0x18174 <+806>:  movl   %eax, 0x8(%esp)
+    0x18178 <+810>:  movl   -0x484(%ebp), %eax
+    0x1817e <+816>:  leal   0x1148fd(%eax), %eax
+    0x18184 <+822>:  movl   %eax, 0x4(%esp)
+    0x18188 <+826>:  leal   -0x480(%ebp), %esi
+    0x1818e <+832>:  movl   %esi, (%esp)
+    0x18191 <+835>:  calll  0x201ba                   ; CUtlFmtString::CUtlFmtString(char const*, ...)
+    0x18196 <+840>:  cmpb   $0x0, -0x471(%ebp)
+    0x1819d <+847>:  jns    0x181a5                   ; <+855>
+    0x1819f <+849>:  movl   -0x480(%ebp), %esi
+    0x181a5 <+855>:  movl   -0x484(%ebp), %eax
+    0x181ab <+861>:  leal   0x1161e3(%eax), %eax
+    0x181b1 <+867>:  testl  %esi, %esi
+    0x181b3 <+869>:  cmovnel %esi, %eax
+    0x181b6 <+872>:  movl   %eax, 0x4(%esp)
+    0x181ba <+876>:  movl   0x8(%ebp), %eax
+    0x181bd <+879>:  movl   %eax, (%esp)
+    0x181c0 <+882>:  calll  0x1839c                   ; CSteamUpdater::LogAndPostFatalError(char const*)
+    0x181c5 <+887>:  leal   -0x480(%ebp), %eax
+    0x181cb <+893>:  movl   %eax, (%esp)
+    0x181ce <+896>:  calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x181d3 <+901>:  movl   0x8(%ebp), %eax
+    0x181d6 <+904>:  movb   $0x1, 0x49(%eax)
+    0x181da <+908>:  jmp    0x18328                   ; <+1242>
+    0x181df <+913>:  movl   %eax, %esi
+    0x181e1 <+915>:  leal   -0x450(%ebp), %eax
+    0x181e7 <+921>:  movl   %eax, (%esp)
+    0x181ea <+924>:  calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x181ef <+929>:  leal   -0x420(%ebp), %edi
+    0x181f5 <+935>:  jmp    0x18369                   ; <+1307>
+    0x181fa <+940>:  movl   %eax, %esi
+    0x181fc <+942>:  leal   -0x460(%ebp), %eax
+    0x18202 <+948>:  movl   %eax, (%esp)
+    0x18205 <+951>:  calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x1820a <+956>:  leal   -0x420(%ebp), %edi
+    0x18210 <+962>:  jmp    0x18369                   ; <+1307>
+    0x18215 <+967>:  cmpb   $0x0, -0x488(%ebp)
+    0x1821c <+974>:  jne    0x18164                   ; <+790>
+    0x18222 <+980>:  movb   $0x0, -0x470(%ebp)
+    0x18229 <+987>:  movb   $0xf, -0x461(%ebp)
+    0x18230 <+994>:  movl   0xc(%ebp), %eax
+    0x18233 <+997>:  movl   %eax, (%esp)
+    0x18236 <+1000>: calll  0xbef1a                   ; BFileExists(char const*)
+    0x1823b <+1005>: testb  %al, %al
+    0x1823d <+1007>: jne    0x18281                   ; <+1075>
+    0x1823f <+1009>: movl   0xc(%ebp), %eax
+    0x18242 <+1012>: movl   %eax, 0x8(%esp)
+    0x18246 <+1016>: movl   -0x484(%ebp), %eax
+    0x1824c <+1022>: leal   0x114863(%eax), %eax
+    0x18252 <+1028>: movl   %eax, 0x4(%esp)
+    0x18256 <+1032>: leal   -0x470(%ebp), %eax
+    0x1825c <+1038>: movl   %eax, (%esp)
+    0x1825f <+1041>: calll  0x20204                   ; CUtlStringBuilder::Format(char const*, ...)
+    0x18264 <+1046>: jmp    0x182dc                   ; <+1166>
+    0x18266 <+1048>: movl   %eax, %esi
+    0x18268 <+1050>: leal   -0x470(%ebp), %eax
+    0x1826e <+1056>: movl   %eax, (%esp)
+    0x18271 <+1059>: calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x18276 <+1064>: leal   -0x420(%ebp), %edi
+    0x1827c <+1070>: jmp    0x18369                   ; <+1307>
+    0x18281 <+1075>: movl   0xc(%ebp), %eax
+    0x18284 <+1078>: movl   %eax, (%esp)
+    0x18287 <+1081>: calll  0xbeb40                   ; BIsValidDirectory(char const*)
+    0x1828c <+1086>: testb  %al, %al
+    0x1828e <+1088>: jne    0x182b7                   ; <+1129>
+    0x18290 <+1090>: movl   0xc(%ebp), %eax
+    0x18293 <+1093>: movl   %eax, 0x8(%esp)
+    0x18297 <+1097>: movl   -0x484(%ebp), %eax
+    0x1829d <+1103>: leal   0x114896(%eax), %eax
+    0x182a3 <+1109>: movl   %eax, 0x4(%esp)
+    0x182a7 <+1113>: leal   -0x470(%ebp), %eax
+    0x182ad <+1119>: movl   %eax, (%esp)
+    0x182b0 <+1122>: calll  0x20204                   ; CUtlStringBuilder::Format(char const*, ...)
+    0x182b5 <+1127>: jmp    0x182dc                   ; <+1166>
+    0x182b7 <+1129>: movl   0xc(%ebp), %eax
+    0x182ba <+1132>: movl   %eax, 0x8(%esp)
+    0x182be <+1136>: movl   -0x484(%ebp), %eax
+    0x182c4 <+1142>: leal   0x1148ca(%eax), %eax
+    0x182ca <+1148>: movl   %eax, 0x4(%esp)
+    0x182ce <+1152>: leal   -0x470(%ebp), %eax
+    0x182d4 <+1158>: movl   %eax, (%esp)
+    0x182d7 <+1161>: calll  0x20204                   ; CUtlStringBuilder::Format(char const*, ...)
+    0x182dc <+1166>: cmpb   $0x0, -0x461(%ebp)
+    0x182e3 <+1173>: js     0x182ed                   ; <+1183>
+    0x182e5 <+1175>: leal   -0x470(%ebp), %eax
+    0x182eb <+1181>: jmp    0x182f3                   ; <+1189>
+    0x182ed <+1183>: movl   -0x470(%ebp), %eax
+    0x182f3 <+1189>: movl   -0x484(%ebp), %ecx
+    0x182f9 <+1195>: leal   0x1161e3(%ecx), %ecx
+    0x182ff <+1201>: testl  %eax, %eax
+    0x18301 <+1203>: cmovnel %eax, %ecx
+    0x18304 <+1206>: movl   %ecx, 0x4(%esp)
+    0x18308 <+1210>: movl   0x8(%ebp), %eax
+    0x1830b <+1213>: movl   %eax, (%esp)
+    0x1830e <+1216>: calll  0x1839c                   ; CSteamUpdater::LogAndPostFatalError(char const*)
+    0x18313 <+1221>: movl   0x8(%ebp), %eax
+    0x18316 <+1224>: movb   $0x1, 0x49(%eax)
+    0x1831a <+1228>: leal   -0x470(%ebp), %eax
+    0x18320 <+1234>: movl   %eax, (%esp)
+    0x18323 <+1237>: calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x18328 <+1242>: leal   -0x420(%ebp), %eax
+    0x1832e <+1248>: movl   %eax, (%esp)
+    0x18331 <+1251>: calll  0xbe5ba                   ; CDirIterator::~CDirIterator()
+    0x18336 <+1256>: movl   -0x498(%ebp), %eax
+    0x1833c <+1262>: movl   (%eax), %eax
+    0x1833e <+1264>: cmpl   -0x10(%ebp), %eax
+    0x18341 <+1267>: jne    0x18379                   ; <+1323>
+    0x18343 <+1269>: movb   -0x492(%ebp), %al
+    0x18349 <+1275>: andb   $0x1, %al
+    0x1834b <+1277>: movzbl %al, %eax
+    0x1834e <+1280>: addl   $0x49c, %esp              ; imm = 0x49C
+    0x18354 <+1286>: popl   %esi
+    0x18355 <+1287>: popl   %edi
+    0x18356 <+1288>: popl   %ebx
+    0x18357 <+1289>: popl   %ebp
+    0x18358 <+1290>: retl
+    0x18359 <+1291>: movl   %eax, %esi
+    0x1835b <+1293>: movl   %edi, (%esp)
+    0x1835e <+1296>: calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x18363 <+1301>: leal   -0x420(%ebp), %edi
+    0x18369 <+1307>: movl   %edi, (%esp)
+    0x1836c <+1310>: calll  0xbe5ba                   ; CDirIterator::~CDirIterator()
+    0x18371 <+1315>: movl   %esi, (%esp)
+    0x18374 <+1318>: calll  0x128a7c                  ; symbol stub for: _Unwind_Resume
+    0x18379 <+1323>: calll  0x12861a                  ; symbol stub for: __stack_chk_fail
+    0x1837e <+1328>: movl   %eax, %esi
+    0x18380 <+1330>: leal   -0x480(%ebp), %eax
+    0x18386 <+1336>: movl   %eax, (%esp)
+    0x18389 <+1339>: calll  0x220f0                   ; CUtlStringBuilder::Data::FreeHeap()
+    0x1838e <+1344>: leal   -0x420(%ebp), %edi
+    0x18394 <+1350>: jmp    0x18369                   ; <+1307>
+    0x18396 <+1352>: calll  0x128590                  ; symbol stub for: std::terminate()
+    0x1839b <+1357>: nop
