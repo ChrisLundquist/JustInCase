@@ -1,6 +1,5 @@
 #include <dirent.h>
 #include <dlfcn.h>
-#include <dlfcn.h>
 #include <fcntl.h>
 #include <libgen.h>
 #include <stdarg.h>
@@ -8,14 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/attr.h>
-#include <sys/mman.h>
-#include <sys/resource.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
-#include <sys/time.h>
 #include <sys/types.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #define EXPORT __attribute__((visibility("default")))
@@ -71,9 +65,7 @@ int jic_open(const char *path, int oflag, ...) {
 
     int fd = open(path, oflag, mode);
     if (fd < 0 && target_path(path)) {
-        //fprintf(stderr, "**************\n");
         fprintf(stderr, "failed to open: %s\n", path);
-        //fprintf(stderr, "**************\n");
         char* replacement_path = find_replacement(path);
         fd = open(replacement_path, oflag, mode);
         free(replacement_path);
@@ -100,9 +92,7 @@ EXPORT
 int jic_stat(const char *restrict path, struct stat *restrict buf) {
     int ret = stat(path, buf);
     if (ret < 0 && target_path(path)) {
-        //fprintf(stderr, "**************\n");
         fprintf(stderr, "failed stat for target: %s\n", path);
-        //fprintf(stderr, "**************\n");
         char* replacement_path = find_replacement(path);
         ret = stat(replacement_path, buf);
         free(replacement_path);
