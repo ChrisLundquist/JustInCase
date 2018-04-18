@@ -11,6 +11,10 @@ stat("/Applications/Steam.app/Contents/MacOS/frameworks\0", 0xBFFFDCA0, 0x0)		 =
 stat("/Applications/Steam.app/Contents/MacOS/fRameworks\0", 0xBFFFDCA0, 0x0)		 = -1 Err#2
 stat("/Applications/Steam.app/Contents/MacOS/fRAmeworks\0", 0xBFFFDCA0, 0x0)		 = -1 Err#2
 
+stat("/Applications/Steam.app/Contents/MacOS/ambrosiaAudioSupport.pkg\0", 0xBFFFDCA0, 0x0)		 = -1 Err#2
+stat("/Applications/Steam.app/Contents/MacOS/aMbrosiaAudioSupport.pkg\0", 0xBFFFDCA0, 0x0)		 = -1 Err#2
+stat("/Applications/Steam.app/Contents/MacOS/aMBrosiaAudioSupport.pkg\0", 0xBFFFDCA0, 0x0)		 = -1 Err#2
+
 
 # Thread backtrace
 
@@ -358,3 +362,273 @@ steam`CSteamUpdater::BEnsureDirectoryCaseInsensitive:
     0x18394 <+1350>: jmp    0x18369                   ; <+1307>
     0x18396 <+1352>: calll  0x128590                  ; symbol stub for: std::terminate()
     0x1839b <+1357>: nop
+
+
+----
+
+# Are we only intercepting stat64?
+
+failed stat for target: /Applications/Steam.app/Contents/MacOS/osx32/MacOS/osx32
+failed stat for target: /Applications/Steam.app/Contents/MacOS/osx32/osx32
+failed stat for target: /Applications/Steam.app/Contents/MacOS/osx32/osx32
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/./steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/./steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/./steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/./steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/./steam
+hijacked getattrlist for: /Applications/Steam.app
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/Fonts
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/Fonts
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/./steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/./steam
+hijacked getattrlist for: /Applications/Steam.app/Contents/MacOS/osx32/steam
+
+28232/0xbd4b4:     31349      23     18 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x1100004, 0x1091000C)		 = 3 0
+28232/0xbd4b4:     31414      10      8 stat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFCBE8, 0x0)		 = 0 0
+28232/0xbd4b4:     31429       8      5 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x1100004, 0x1091000C)		 = 3 0
+28232/0xbd4b4:     31465       9      6 stat64("/Applications/Steam.app/Contents/MacOS/osx32/./steam\0", 0xBFFFC958, 0x0)		 = 0 0
+28232/0xbd4b4:     31484       8      6 open("/Applications/Steam.app/Contents/MacOS/osx32/./steam\0", 0x0, 0x0)		 = 3 0
+28232/0xbd4b4:     34725      20     15 chdir("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x0, 0x0)		 = 0 0
+28232/0xbd4b4:     39310      11      8 stat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFF9720, 0x0)		 = 0 0
+28232/0xbd4b4:     39331      20     17 stat("/Applications/Steam.app/Contents/MacOS/osx32/package/beta\0", 0xBFFF9C70, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     39353       6      3 stat("/Applications/Steam.app/Contents/MacOS/osx32/package/steam_client_osx.manifest\0", 0xBFFFAD30, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     41065      20     13 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x1100004, 0x1091000C)		 = 4 0
+28232/0xbd4b4:     41141      14      9 stat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFC0A8, 0x0)		 = 0 0
+28232/0xbd4b4:     41159      11      6 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x1100004, 0x1091000C)		 = 4 0
+28232/0xbd4b4:     41233       7      4 stat64("/Applications/Steam.app/Contents/MacOS/osx32/MacOS/osx32\0", 0xBFFFC0C8, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     41288      10      5 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32/MacOS\0", 0x1100004, 0x73737373)		 = -1 Err#2
+28232/0xbd4b4:     41292       5      2 stat64("/Applications/Steam.app/Contents/MacOS/osx32/MacOS/osx32\0", 0xBFFFC0C8, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     41317       6      3 stat64("/Applications/Steam.app/Contents/MacOS/osx32/osx32\0", 0xBFFFC0C8, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     41333      12      7 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x1100004, 0x2F000000)		 = 4 0
+28232/0xbd4b4:     41383       6      3 stat64("/Applications/Steam.app/Contents/MacOS/osx32/osx32\0", 0xBFFFC0C8, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     41396       5      2 stat64("/Applications/Steam.app/Contents/MacOS/osx32/osx32\0", 0xBFFFC0C8, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     41411      11      7 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x1100004, 0x2F000000)		 = 4 0
+28232/0xbd4b4:     41442       6      2 stat64("/Applications/Steam.app/Contents/MacOS/osx32/osx32\0", 0xBFFFC0C8, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     42662       8      5 lstat64("/Applications/Steam.app\0", 0xBFFFA538, 0x0)		 = 0 0
+28232/0xbd4b4:     42668       7      4 lstat64("/Applications/Steam.app/Contents\0", 0xBFFFA538, 0x0)		 = 0 0
+28232/0xbd4b4:     42673       7      4 lstat64("/Applications/Steam.app/Contents/MacOS\0", 0xBFFFA538, 0x0)		 = 0 0
+28232/0xbd4b4:     42678       6      4 lstat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFA538, 0x0)		 = 0 0
+28232/0xbd4b4:     42684       7      4 lstat64("/Applications/Steam.app/Contents/MacOS/osx32/steam\0", 0xBFFFA538, 0x0)		 = 0 0
+28232/0xbd4b4:     42691       7      4 stat64("/Applications/Steam.app/Contents/MacOS/osx32/./steam\0", 0xBFFFBE38, 0x0)		 = 0 0
+28232/0xbd4b4:     43017       7      4 lstat64("/Applications/Steam.app\0", 0xBFFFA998, 0x0)		 = 0 0
+28232/0xbd4b4:     43022       6      4 lstat64("/Applications/Steam.app/Contents\0", 0xBFFFA998, 0x0)		 = 0 0
+28232/0xbd4b4:     43026       6      3 lstat64("/Applications/Steam.app/Contents/MacOS\0", 0xBFFFA998, 0x0)		 = 0 0
+28232/0xbd4b4:     43031       6      3 lstat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFA998, 0x0)		 = 0 0
+28232/0xbd4b4:     43037       7      4 lstat64("/Applications/Steam.app/Contents/MacOS/osx32/steam\0", 0xBFFFA998, 0x0)		 = 0 0
+28232/0xbd4b4:     43050       7      4 stat64("/Applications/Steam.app/Contents/MacOS/osx32/./steam\0", 0xBFFFC298, 0x0)		 = 0 0
+28232/0xbd4b4:     44526      28     14 lstat64("/Applications/Steam.app/Contents/MacOS/osx32/./steam\0", 0xBFFFC960, 0x0)		 = 0 0
+28232/0xbd4b4:     47846      12      8 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x1100004, 0x1091000C)		 = 4 0
+28232/0xbd4b4:     50312      12      8 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32/\0", 0x1100004, 0x1091000C)		 = 4 0
+28232/0xbd4b4:     50387      22     18 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32//en.lproj\0", 0x1100004, 0x1091000C)		 = -1 Err#2
+28232/0xbd4b4:     50404      15     11 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32//Base.lproj\0", 0x1100004, 0x1091000C)		 = -1 Err#2
+28232/0xbd4b4:     50420      14     10 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32//English.lproj\0", 0x1100004, 0x1091000C)		 = -1 Err#2
+28232/0xbd4b4:     51735      13      8 lstat64("/Applications/Steam.app\0", 0xBFFFB7E8, 0x0)		 = 0 0
+28232/0xbd4b4:     51744      11      7 lstat64("/Applications/Steam.app/Contents\0", 0xBFFFB7E8, 0x0)		 = 0 0
+28232/0xbd4b4:     51754      12      8 lstat64("/Applications/Steam.app/Contents/MacOS\0", 0xBFFFB7E8, 0x0)		 = 0 0
+28232/0xbd4b4:     51763      11      7 lstat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFB7E8, 0x0)		 = 0 0
+28232/0xbd4b4:     51773      13      9 lstat64("/Applications/Steam.app/Contents/MacOS/osx32/Fonts\0", 0xBFFFB7E8, 0x0)		 = 0 0
+28232/0xbd4b4:     51786      12      8 stat64("/Applications/Steam.app/Contents/MacOS/osx32/Fonts\0", 0xBFFFD0E8, 0x0)		 = 0 0
+28232/0xbd4b4:     60338      17     13 stat64("/Applications/Steam.app/Contents/MacOS/osx32/Fonts/\0", 0xBFFFCF70, 0x0)		 = 0 0
+28232/0xbd4b4:     60359       8      5 stat64("/Applications/Steam.app/Contents/MacOS/osx32/Fonts\0", 0xBFFFC958, 0x0)		 = 0 0
+28232/0xbd4b4:     60370      12      7 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32/Fonts\0", 0x1100004, 0x1)		 = 5 0
+28232/0xbd4b4:     62235       8      5 lstat64("/Applications/Steam.app\0", 0xBFFFBFE0, 0x0)		 = 0 0
+28232/0xbd4b4:     62242       7      4 lstat64("/Applications/Steam.app/Contents\0", 0xBFFFBFE0, 0x0)		 = 0 0
+28232/0xbd4b4:     62251       7      4 lstat64("/Applications/Steam.app/Contents/MacOS\0", 0xBFFFBFE0, 0x0)		 = 0 0
+28232/0xbd4b4:     62261       7      4 lstat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFBFE0, 0x0)		 = 0 0
+28232/0xbd4b4:     62279       7      4 stat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFD0E8, 0x0)		 = 0 0
+28232/0xbd4b4:     62284       7      4 access("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x4, 0x0)		 = 0 0
+28232/0xbd4b4:     79619      10      7 stat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFDCE0, 0x0)		 = 0 0
+28232/0xbd4b4:     79711      91     88 unlink("/Applications/Steam.app/Contents/MacOS/osx32/.writable\0", 0x0, 0x0)		 = 0 0
+28232/0xbd4b4:     79724      10      6 stat("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFD8C8, 0x0)		 = 0 0
+28232/0xbd4b4:     79738       9      5 open_nocancel("/Applications/Steam.app/Contents/MacOS/osx32\0", 0x1100004, 0xFFFFFFFFBFFFD8A8)		 = 5 0
+28232/0xbd4b4:     79789       9      6 stat("/Applications/Steam.app/Contents/MacOS/osx32/Fonts\0", 0xBFFFD438, 0x0)		 = 0 0
+28232/0xbd4b4:     79807      13     11 stat("/Applications/Steam.app/Contents/MacOS/osx32/fonts\0", 0xBFFFDD20, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     79822      12      9 stat("/Applications/Steam.app/Contents/MacOS/osx32/fOnts\0", 0xBFFFDD20, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     79834      11      9 stat("/Applications/Steam.app/Contents/MacOS/osx32/fONts\0", 0xBFFFDD20, 0x0)		 = -1 Err#2
+28232/0xbd4b4:     80233       7      4 lstat64("/Applications/Steam.app\0", 0xBFFFB478, 0x0)		 = 0 0
+28232/0xbd4b4:     80237       6      3 lstat64("/Applications/Steam.app/Contents\0", 0xBFFFB478, 0x0)		 = 0 0
+28232/0xbd4b4:     80242       6      3 lstat64("/Applications/Steam.app/Contents/MacOS\0", 0xBFFFB478, 0x0)		 = 0 0
+28232/0xbd4b4:     80247       6      4 lstat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFB478, 0x0)		 = 0 0
+28232/0xbd4b4:     80253       7      4 lstat64("/Applications/Steam.app/Contents/MacOS/osx32/steam\0", 0xBFFFB478, 0x0)		 = 0 0
+28232/0xbd4b4:     80260       6      3 stat64("/Applications/Steam.app/Contents/MacOS/osx32/./steam\0", 0xBFFFCD78, 0x0)		 = 0 0
+28232/0xbd4b4:    103628      11      7 lstat64("/Applications/Steam.app\0", 0xBFFFAD28, 0x0)		 = 0 0
+28232/0xbd4b4:    103635       9      5 lstat64("/Applications/Steam.app/Contents\0", 0xBFFFAD28, 0x0)		 = 0 0
+28232/0xbd4b4:    103642       9      5 lstat64("/Applications/Steam.app/Contents/MacOS\0", 0xBFFFAD28, 0x0)		 = 0 0
+28232/0xbd4b4:    103657      17     14 lstat64("/Applications/Steam.app/Contents/MacOS/osx32\0", 0xBFFFAD28, 0x0)		 = 0 0
+28232/0xbd4b4:    103666      11      8 lstat64("/Applications/Steam.app/Contents/MacOS/osx32/steam\0", 0xBFFFAD28, 0x0)		 = 0 0
+28232/0xbd4b4:    103676       8      4 stat64("/Applications/Steam.app/Contents/MacOS/osx32/./steam\0", 0xBFFFC628, 0x0)		 = 0 0
+
+
+~/Library/Application\ Support/Steam/Steam.AppBundle/Steam/Contents/MacOS/
+
+
+# New
+steam_osx`BIsFilesystemCaseSensitive:
+    0x275c5 <+0>:   pushl  %ebp
+    0x275c6 <+1>:   movl   %esp, %ebp
+    0x275c8 <+3>:   pushl  %ebx
+    0x275c9 <+4>:   pushl  %edi
+    0x275ca <+5>:   pushl  %esi
+    0x275cb <+6>:   subl   $0x1c, %esp
+    0x275ce <+9>:   calll  0x275d3                   ; <+14>
+    0x275d3 <+14>:  popl   %edi
+    0x275d4 <+15>:  movl   0x8(%ebp), %ebx
+    0x275d7 <+18>:  movl   0x2b9a2d(%edi), %eax
+    0x275dd <+24>:  movl   0x2b9a65(%edi), %ecx
+    0x275e3 <+30>:  movl   %ecx, 0x4(%esp)
+    0x275e7 <+34>:  movl   %eax, (%esp)
+    ; *eax = Foundation`NSAutoreleasePool
+    0x275ea <+37>:  calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x275ef <+42>:  movl   0x2b9a69(%edi), %ecx
+    0x275f5 <+48>:  movl   %ecx, 0x4(%esp)
+    ; ebx = /Users/clundquist/Library/Application Support/Steam/Steam.AppBundle/Steam/Contents/MacOS
+    ; edx = Foundation`+[NSAutoreleasePool allocWithZone:] + 14
+    0x275f9 <+52>:  movl   %eax, (%esp)
+    0x275fc <+55>:  calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x27601 <+60>:  movl   %eax, %esi
+    0x27603 <+62>:  movl   0x2b9a35(%edi), %eax
+    0x27609 <+68>:  movl   0x2b9af1(%edi), %ecx
+    0x2760f <+74>:  movl   %ebx, 0x8(%esp)
+    0x27613 <+78>:  movl   %ecx, 0x4(%esp)
+    0x27617 <+82>:  movl   %eax, (%esp)
+    0x2761a <+85>:  movl   $0x4, 0xc(%esp)
+    ; eax = Foundation`NSString
+    ; ebx = /Users/clundquist/Library/Application Support/Steam/Steam.AppBundle/Steam/Contents/MacOS
+    ; ecx = stringWithCString:encoding:
+    0x27622 <+93>:  calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x27627 <+98>:  testl  %eax, %eax
+    0x27629 <+100>: jne    0x27657                   ; <+146>
+    0x2762b <+102>: movl   0x2b9a35(%edi), %eax
+    0x27631 <+108>: movl   0x2b9af1(%edi), %ecx
+    0x27637 <+114>: movl   %ebx, 0x8(%esp)
+    0x2763b <+118>: movl   %ecx, 0x4(%esp)
+    0x2763f <+122>: movl   %eax, (%esp)
+    0x27642 <+125>: movl   $0x1e, 0xc(%esp)
+    ; *ebx = /Users/clundquist/Library/Application Support/Steam/Steam.AppBundle/Steam/Contents/MacOS
+    ; *ecx = stringByResolvingSymlinksInPath # Take the path in EBX, follow any symlinks and get rid of double slashes, etc
+    0x2764a <+133>: calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x2764f <+138>: testl  %eax, %eax
+    0x27651 <+140>: je     0x276dd                   ; <+280>
+    0x27657 <+146>: movl   0x2b9af5(%edi), %ecx
+    0x2765d <+152>: movl   %ecx, 0x4(%esp)
+    0x27661 <+156>: movl   %eax, (%esp)
+    ; *ebx = /Users/clundquist/Library/Application Support/Steam/Steam.AppBundle/Steam/Contents/MacOS
+    ; *ecx = 0xa7ff19e0  CoreFoundation`NSURL
+    0x27664 <+159>: calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x27669 <+164>: testl  %eax, %eax
+    0x2766b <+166>: je     0x276dd                   ; <+280>
+    0x2766d <+168>: movl   $0x0, -0x10(%ebp)
+    0x27674 <+175>: movl   0x2b9a59(%edi), %ecx
+    0x2767a <+181>: movl   0x2b9af9(%edi), %edx
+    0x27680 <+187>: movl   %eax, 0x8(%esp)
+    0x27684 <+191>: movl   %edx, 0x4(%esp)
+    0x27688 <+195>: movl   %ecx, (%esp)
+    ; *ebx = /Users/clundquist/Library/Application Support/Steam/Steam.AppBundle/Steam/Contents/MacOS
+    ; edx = fileURLWithPath # Turn our NSString into an NSURL?
+    0x2768b <+198>: calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x27690 <+203>: movl   0x282ac9(%edi), %ecx
+    0x27696 <+209>: movl   (%ecx), %ecx
+    0x27698 <+211>: movl   0x2b9afd(%edi), %edx
+    0x2769e <+217>: movl   %ecx, 0xc(%esp)
+    0x276a2 <+221>: leal   -0x10(%ebp), %ecx
+    0x276a5 <+224>: movl   %ecx, 0x8(%esp)
+    0x276a9 <+228>: movl   %edx, 0x4(%esp)
+    0x276ad <+232>: movl   %eax, (%esp)
+    0x276b0 <+235>: movl   $0x0, 0x10(%esp)
+    ; edx = 0x91f36799  "getResourceValue:forKey:error:" # Check for some error?
+    0x276b8 <+243>: calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x276bd <+248>: testb  %al, %al
+    0x276bf <+250>: je     0x276dd                   ; <+280>
+    0x276c1 <+252>: movl   -0x10(%ebp), %eax
+    0x276c4 <+255>: movl   0x2b9b01(%edi), %ecx
+    0x276ca <+261>: movl   %ecx, 0x4(%esp)
+    0x276ce <+265>: movl   %eax, (%esp)
+    ;  eax = 0xa7fe99c0  __kCFBooleanTrue
+    0x276d1 <+268>: calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x276d6 <+273>: testl  %eax, %eax
+    0x276d8 <+275>: setne  %bl
+    0x276db <+278>: jmp    0x276df                   ; <+282>
+    0x276dd <+280>: xorl   %ebx, %ebx
+    0x276df <+282>: movl   0x2b9a79(%edi), %eax
+    0x276e5 <+288>: movl   %eax, 0x4(%esp)
+    0x276e9 <+292>: movl   %esi, (%esp)
+    ; *eax = drain.URLWithString # Free our reference counts
+    0x276ec <+295>: calll  0x215a4a                  ; symbol stub for: objc_msgSend
+    0x276f1 <+300>: movzbl %bl, %eax
+    0x276f4 <+303>: addl   $0x1c, %esp
+    0x276f7 <+306>: popl   %esi
+    0x276f8 <+307>: popl   %edi
+    0x276f9 <+308>: popl   %ebx
+    0x276fa <+309>: popl   %ebp
+    0x276fb <+310>: retl
+
+
+#
+rbreak BEnsureDirectoryCaseInsensitive
+rbreak BIsFilesystemCaseSensitive
+break set -a 0x275ea
+break set -a 0x275fc
+break set -a 0x27622
+break set -a 0x2764a
+break set -a 0x27664
+break set -a 0x2768b
+break set -a 0x276b8
+break set -a 0x276d1
+break set -a 0x276ec
+
+target stop-hook add
+register read
+x $eax -c 128
+x $ebx -c 128
+x $ecx -c 128
+x $edx -c 128
+DONE
+
+
+# Unsign the new version to get dtruss to work again
+origin	git@github.com:steakknife/unsign.git (fetch)
+origin	git@github.com:steakknife/unsign.git (push)
+
+make -> unsign target
+
+
+# This copy won't scrub INSERT_DYLD
+/Applications/Xcode.app/Contents/Developer/usr/bin/lldb
+
+# Ways to check for case sensitive file systems:
+https://gist.github.com/loderunner/6d8a1e0b14699da95214
+
+
+# Looks like they're checking signatures?
+frame #6: 0x9d02d4f7 Security`SecStaticCodeCreateWithPath + 89
+frame #7: 0x00027ccb steam_osx`BCheckBundleSignature(CUtlString const&) + 106
+frame #8: 0x00027d51 steam_osx`VerifyAndUpdateAppBundle(CUtlString const&, CUtlString const&, bool&) + 55
+frame #9: 0x0000f6b8 steam_osx`main + 4540
+frame #10: 0x000027f5 steam_osx`start + 53
+
+# Moving something?
+frame #9: 0x0002aee1 steam_osx`CCarbonUpdateUI::BRunFrame(CReliableTimer*) + 337
+frame #10: 0x00011270 steam_osx`MoveSteamContent(char const*, char const*, CFrameFunctionMgr*, IUpdateStatusUI*) + 196
+frame #11: 0x0000fd30 steam_osx`main + 6196
+frame #12: 0x000027f5 steam_osx`start + 53
+
+# Error 42, fork + exec
+    0xf901 <+5125>:  jne    0xf8d1                    ; <+5077>
+    0xf903 <+5127>:  calll  0x21550a                  ; symbol stub for: fork
+    0xf908 <+5132>:  testl  %eax, %eax
+    0xf90a <+5134>:  jne    0xf931                    ; <+5173>
+    0xf90c <+5136>:  calll  0x2157ce                  ; symbol stub for: setsid
+    0xf911 <+5141>:  movl   $0x1, (%esp)
+    0xf918 <+5148>:  calll  0x2157fe                  ; symbol stub for: sleep$UNIX2003
+    0xf91d <+5153>:  movl   -0x17e0(%ebp), %ecx
+    0xf923 <+5159>:  movl   (%ecx), %eax
+    0xf925 <+5161>:  movl   %ecx, 0x4(%esp)
+    0xf929 <+5165>:  movl   %eax, (%esp)
+    0xf92c <+5168>:  calll  0x2154ce                  ; symbol stub for: execvp
+->  0xf931 <+5173>:  movl   $0x2a, (%esp)
+    0xf938 <+5180>:  calll  0x2154d4                  ; symbol stub for: exit
+

@@ -15,8 +15,8 @@
 #define EXPORT __attribute__((visibility("default")))
 
 #define DYLD_INTERPOSE(_replacment,_replacee) \
-__attribute__((used)) static struct{ const void* replacment; const void* replacee; } _interpose_##_replacee \
-__attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacment, (const void*)(unsigned long)&_replacee };
+    __attribute__((used)) static struct{ const void* replacment; const void* replacee; } _interpose_##_replacee \
+    __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacment, (const void*)(unsigned long)&_replacee };
 
 static inline bool target_path(const char *path) {
     return strcasestr(path, "steam");
@@ -55,16 +55,16 @@ int jic_open(const char *path, int oflag, ...) {
     va_list ap;
     int mode;
 
-	if ((oflag & O_CREAT) != 0) {
-		va_start(ap, oflag);
-		mode = va_arg(ap, int);
-		va_end(ap);
-	} else {
-		mode = 0;
-	}
+    if ((oflag & O_CREAT) != 0) {
+        va_start(ap, oflag);
+        mode = va_arg(ap, int);
+        va_end(ap);
+    } else {
+        mode = 0;
+    }
 
     int fd = open(path, oflag, mode);
-    if (fd < 0 && target_path(path)) {
+    if (fd < 0 ) { //&& target_path(path)) {
         fprintf(stderr, "failed to open: %s\n", path);
         char* replacement_path = find_replacement(path);
         fd = open(replacement_path, oflag, mode);
@@ -74,18 +74,16 @@ int jic_open(const char *path, int oflag, ...) {
     return fd;
 }
 
-/*
 EXPORT
 FILE* jic_fopen(const char * restrict path, const char * restrict mode) {
     FILE* ret = fopen(path, mode);
-    if (ret < 0) {
+    if (ret < 0 && target_path(path)) {
         fprintf(stderr, "**************\n");
         fprintf(stderr, "Failed to fopen: %s\n", path);
         fprintf(stderr, "**************\n");
     }
     return ret;
 }
-*/
 
 
 EXPORT
@@ -100,49 +98,40 @@ int jic_stat(const char *restrict path, struct stat *restrict buf) {
     return ret;
 }
 
-/*
-EXPORT
-int jic_statvfs(const char *restrict path, struct statvfs *restrict buf) {
-    int ret = statvfs(path, buf);
-    if (target_path(path)) {
-        fprintf(stderr, "**************\n");
-        fprintf(stderr, "got statvsf for target: %s\n", path);
-        fprintf(stderr, "**************\n");
-    }
-    if (ret < 0) {
-        fprintf(stderr, "**************\n");
-        fprintf(stderr, "Failed to statvfs: %s\n", path);
-        fprintf(stderr, "**************\n");
-    }
-    return ret;
-}
-*/
-
 EXPORT
 int jic_getattrlist(const char* path, struct attrlist * attrList, void * attrBuf, size_t attrBufSize, unsigned long options) {
     //int mask = ~(VOL_CAP_FMT_CASE_SENSITIVE | VOL_CAP_FMT_CASE_PRESERVING);
-    if (target_path(path)) {
-        fprintf(stderr, "**************\n");
-        fprintf(stderr, "hijacked getattrlist for: %s\n", path);
-        fprintf(stderr, "**************\n");
-        memset(attrList, 0, sizeof(*attrList));
-        memset(attrBuf, 0, attrBufSize);
-        return -1;
-    } else {
-        int result = getattrlist(path, attrList, attrBuf, attrBufSize, options);
-        return result;
+    int result = getattrlist(path, attrList, attrBuf, attrBufSize, options);
+    if (result >= 0 && target_path(path)) {
+        if ( attrBufSize == 12)  {
+            fprintf(stderr, "**************\n");
+            fprintf(stderr, "hijacked getattrlist for: %s\n", path);
+            /*
+               fprintf(stderr, "attr count: %d\n", attrList->bitmapcount);
+               fprintf(stderr, "commonattr: %d\n", attrList->commonattr);
+               fprintf(stderr, "volattr: %d\n", attrList->volattr);
+               fprintf(stderr, "dirattr: %d\n", attrList->dirattr);
+               fprintf(stderr, "fileattr: %d\n", attrList->fileattr);
+               fprintf(stderr, "forkattr: %d\n", attrList->forkattr);
+               fprintf(stderr, "attrBufSize: %zu\n", attrBufSize); */
+            //bool case_sensitive = (attrBuf.cap.valid[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_CASE_SENSITIVE) && (attrBuf.cap.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_CASE_SENSITIVE);
+            fprintf(stderr, "**************\n");
+            //memset(attrList, 0, sizeof(*attrList));
+            memset(attrBuf, 0, attrBufSize);
+            ((int*)attrBuf)[0] = sizeof(int);
+        }
     }
+    return result;
 
 }
 
 // Initializer.
 __attribute__((constructor))
-static void initializer(void) {                             // 2
-    fprintf(stderr, "loaded shared lib\n");
+static void initializer(void) {
+    fprintf(stderr, "loaded JustInCase\n");
 }
 
-//DYLD_INTERPOSE(jic_fopen, fopen);
+DYLD_INTERPOSE(jic_fopen, fopen);
 DYLD_INTERPOSE(jic_open, open);
 DYLD_INTERPOSE(jic_stat, stat);
-//DYLD_INTERPOSE(jic_statvfs, statvfs);
 DYLD_INTERPOSE(jic_getattrlist, getattrlist);

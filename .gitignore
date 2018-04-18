@@ -2,4 +2,6 @@
 *.o
 *.dylib
 test
+test32
+test64
 hello
