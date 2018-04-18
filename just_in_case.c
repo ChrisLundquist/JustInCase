@@ -19,7 +19,7 @@
     __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacment, (const void*)(unsigned long)&_replacee };
 
 static inline bool target_path(const char *path) {
-    return strcasestr(path, "steam");
+    return (strcasestr(path, "steam") || strcasestr(path, "public"));
 }
 
 // Caller must free
@@ -74,6 +74,7 @@ int jic_open(const char *path, int oflag, ...) {
     return fd;
 }
 
+/*
 EXPORT
 FILE* jic_fopen(const char * restrict path, const char * restrict mode) {
     FILE* ret = fopen(path, mode);
@@ -84,6 +85,7 @@ FILE* jic_fopen(const char * restrict path, const char * restrict mode) {
     }
     return ret;
 }
+*/
 
 
 EXPORT
@@ -105,7 +107,7 @@ int jic_getattrlist(const char* path, struct attrlist * attrList, void * attrBuf
     if (result >= 0 && target_path(path)) {
         if ( attrBufSize == 12)  {
             fprintf(stderr, "**************\n");
-            fprintf(stderr, "hijacked getattrlist for: %s\n", path);
+            fprintf(stderr, "hijacked getattrlist for target: %s\n", path);
             /*
                fprintf(stderr, "attr count: %d\n", attrList->bitmapcount);
                fprintf(stderr, "commonattr: %d\n", attrList->commonattr);
@@ -128,10 +130,10 @@ int jic_getattrlist(const char* path, struct attrlist * attrList, void * attrBuf
 // Initializer.
 __attribute__((constructor))
 static void initializer(void) {
-    fprintf(stderr, "loaded JustInCase\n");
+    fprintf(stderr, "loaded JustInCase into process: '%d', parent '%d'\n", getpid(), getppid());
 }
 
-DYLD_INTERPOSE(jic_fopen, fopen);
+//DYLD_INTERPOSE(jic_fopen, fopen);
 DYLD_INTERPOSE(jic_open, open);
 DYLD_INTERPOSE(jic_stat, stat);
 DYLD_INTERPOSE(jic_getattrlist, getattrlist);
